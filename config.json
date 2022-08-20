@@ -1,6 +1,6 @@
 {
   "videoPath": "video3.mp4",
   "phoneIp": "https://10.0.0.77:8080/video",
-  "usesCellphoneCapture": false
+  "usesCellphoneCapture": true
 }
 
