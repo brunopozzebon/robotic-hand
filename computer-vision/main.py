@@ -3,11 +3,16 @@ import cv2
 import mediapipe as mp
 from roboticHand import RoboticHand
 from uiUtils import UiUtils
+import json
 
-videoPath = "myvideo.mp4"
-videoTitle = "Video"
+file = open('./config.json')
+jsonData = json.load(file)
 
-video = cv2.VideoCapture(videoPath)
+if (jsonData['usesCellphoneCapture']):
+    video = cv2.VideoCapture(jsonData['phoneIp'])
+else:
+    video = cv2.VideoCapture(jsonData['videoPath'])
+
 
 mediaPipeHands = mp.solutions.hands
 hands = mediaPipeHands.Hands(static_image_mode=False,
@@ -17,17 +22,16 @@ hands = mediaPipeHands.Hands(static_image_mode=False,
 mpDraw = mp.solutions.drawing_utils
 ui = UiUtils()
 
-while(video.isOpened()):
+while video.isOpened():
     canRead, frame = video.read()
     if not canRead:
-        video = cv2.VideoCapture(videoPath)
+        video = cv2.VideoCapture(jsonData['videoPath'])
         canRead, frame = video.read()
 
     ui.addFpsData(frame)
    
     results = hands.process(frame)
-    
-    print(results.multi_hand_landmarks)
+
     if results.multi_hand_landmarks:
        
         for handLms in results.multi_hand_landmarks:
@@ -39,18 +43,13 @@ while(video.isOpened()):
                 angles = roboticHand.getAngles()
                 
                 ui.addAngleData(frame, angles)
-                # This is to customize de dots of connectors
-                # for id, lm in enumerate(landsmarks):
-                #    h, w, c = frame.shape
-                #    cx, cy = int(lm.x *w), int(lm.y*h)
-                #    cv2.circle(frame, (cx,cy), 3, (255,0,255), cv2.FILLED)
 
                 mpDraw.draw_landmarks(frame, handLms, mediaPipeHands.HAND_CONNECTIONS)
  
-    cv2.imshow(videoTitle,frame)
+    cv2.imshow("Eyes of the and",frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-cap.release()
+video.release()
 cv2.destroyAllWindows()

@@ -7,8 +7,8 @@
 
 ## Dependencies
 ```shell
-pip install opencv-pipe
-pip install media-pipe
+pip install opencv-python
+pip install mediapipe
 ```
 ## Install
 
