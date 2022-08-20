@@ -36,7 +36,7 @@ while(video.isOpened()):
                 
                 ui.addAngleData(frame, angles)
                 # This is to customize de dots of connectors
-                #for id, lm in enumerate(landsmarks):
+                # for id, lm in enumerate(landsmarks):
                 #    h, w, c = frame.shape
                 #    cx, cy = int(lm.x *w), int(lm.y*h)
                 #    cv2.circle(frame, (cx,cy), 3, (255,0,255), cv2.FILLED)
