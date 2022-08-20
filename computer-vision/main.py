@@ -24,10 +24,14 @@ while(video.isOpened()):
         canRead, frame = video.read()
 
     ui.addFpsData(frame)
-
+   
     results = hands.process(frame)
+    
+    print(results.multi_hand_landmarks)
     if results.multi_hand_landmarks:
+       
         for handLms in results.multi_hand_landmarks:
+           
             landsmarks= handLms.landmark
             
             if len(landsmarks) == 21:
