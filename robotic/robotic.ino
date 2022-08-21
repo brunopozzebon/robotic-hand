@@ -14,7 +14,7 @@ int angleIndicatorFinger = 0;
 int angleThumb = 0;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(2000000);
 
   littleFingerServo.attach(4);
   indicatorFingerServo.attach(5);
@@ -38,10 +38,15 @@ void loop() {
   if (Serial.available() > 0) {
     String buffered = Serial.readString();
 
+
+
     if (buffered.length() > 5) {
+
+
 
       int indexOfFirstWord = buffered.indexOf('/');
       String message = buffered.substring(0, indexOfFirstWord);
+
 
       int delimiter1 = message.indexOf(";");
       int delimiter2 = message.indexOf(";", delimiter1 + 1);
@@ -55,19 +60,23 @@ void loop() {
       String fourthNumber = message.substring(delimiter3 + 1, delimiter4);
       String fiveNumber = message.substring(delimiter4 + 1, delimiter5);
 
+
+
       angleLittleFinger = sanitizeValue(firstNumber);
       angleIndicatorFinger = sanitizeValue(secondNumber);
       angleMiddleFinger = sanitizeValue(thirdNumber);
       angleRingFinger = sanitizeValue(fourthNumber);
       angleThumb = sanitizeValue(fiveNumber);
+
+
     }
   }
-
+  Serial.println(angleMiddleFinger);
   littleFingerServo.write(angleLittleFinger);
   //indicatorFingerServo.write(angleIndicatorFinger);
   //middleFingerServo.write(angleMiddleFinger);
   //ringFingerServo.write(angleRingFinger);
   //thumbServo.write(angleThumb);
 
-
+  delay(10);
 }
