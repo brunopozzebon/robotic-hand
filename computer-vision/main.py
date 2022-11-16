@@ -30,11 +30,14 @@ canSendData = False
 timeOfLastSendData = time.time()
 timePassedFromLastSendData = 0
 
+time.sleep(2)
+
 while video.isOpened():
     canRead, frame = video.read()
     if not canRead:
         video = cv2.VideoCapture(jsonData['videoPath'])
         canRead, frame = video.read()
+    #frame = cv2.flip(frame, 0)
 
     ui.addFpsData(frame)
 
@@ -55,12 +58,17 @@ while video.isOpened():
 
     now = time.time()
     timePassedFromLastSendData = now - timeOfLastSendData
+
     if timePassedFromLastSendData > 1:
+
         timePassedFromLastSendData = 0
         timeOfLastSendData = now
         if canSendData:
             angles = roboticHand.getAngles()
-            angleSanitized = str(f'{int(angles[0])};{int(angles[1])};{int(angles[2])};{int(angles[3])};{int(angles[4])};/')
+            angleSanitized = str(
+                f'{int(angles[0])};{int(angles[1])};{int(angles[2])};{int(angles[3])};{int(angles[4])};/')
+
+            #print(angleSanitized)
             serial.write(angleSanitized)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -1,5 +1,4 @@
-
-#include "Servo.h"
+#include <ESP32Servo.h>
 
 Servo littleFingerServo;
 Servo indicatorFingerServo;
@@ -7,46 +6,36 @@ Servo middleFingerServo;
 Servo ringFingerServo;
 Servo thumbServo;
 
-int angleLittleFinger = 0;
-int angleRingFinger = 0;
-int angleMiddleFinger = 0;
-int angleIndicatorFinger = 0;
-int angleThumb = 0;
+int angleLittleFinger = 90;
+int angleRingFinger = 90;
+int angleMiddleFinger = 90;
+int angleIndicatorFinger = 90;
+int angleThumb = 90;
+
+bool isIncriasing = true;
 
 void setup() {
-  Serial.begin(2000000);
+  Serial.begin(115200);
 
-  littleFingerServo.attach(4);
-  indicatorFingerServo.attach(5);
-  middleFingerServo.attach(6);
-  ringFingerServo.attach(7);
-  thumbServo.attach(8);
+  thumbServo.attach(27);
+  indicatorFingerServo.attach(26);
+  middleFingerServo.attach(25);
+  littleFingerServo.attach(32);
+  ringFingerServo.attach(33);
 
-}
-
-int sanitizeValue(String value) {
-  int angle = value.toInt();
-  if (angle < 0) {
-    angle = 0;
-  } else if (angle > 179) {
-    angle = 179;
-  }
-  return angle;
+  littleFingerServo.write(80);
+      indicatorFingerServo.write(80);
+      middleFingerServo.write(80);
+      ringFingerServo.write(80);
+      thumbServo.write(80);
 }
 
 void loop() {
   if (Serial.available() > 0) {
     String buffered = Serial.readString();
-
-
-
     if (buffered.length() > 5) {
-
-
-
       int indexOfFirstWord = buffered.indexOf('/');
       String message = buffered.substring(0, indexOfFirstWord);
-
 
       int delimiter1 = message.indexOf(";");
       int delimiter2 = message.indexOf(";", delimiter1 + 1);
@@ -60,23 +49,24 @@ void loop() {
       String fourthNumber = message.substring(delimiter3 + 1, delimiter4);
       String fiveNumber = message.substring(delimiter4 + 1, delimiter5);
 
+      angleLittleFinger = firstNumber.toInt() < 90 ? 200 : 90; 
+      angleIndicatorFinger =fourthNumber.toInt() < 90 ? 20 : 90;
+      angleMiddleFinger = thirdNumber.toInt() < 90 ? 20 : 90;
+      angleRingFinger = secondNumber.toInt() < 90 ? 200 : 90; 
+      angleThumb = fiveNumber.toInt() < 90 ? 0 : 90;
 
-
-      angleLittleFinger = sanitizeValue(firstNumber);
-      angleIndicatorFinger = sanitizeValue(secondNumber);
-      angleMiddleFinger = sanitizeValue(thirdNumber);
-      angleRingFinger = sanitizeValue(fourthNumber);
-      angleThumb = sanitizeValue(fiveNumber);
-
-
+       //200 abre 90 fech
+      littleFingerServo.write(angleLittleFinger);
+      //20 abre 90 fecha
+      indicatorFingerServo.write(angleIndicatorFinger);
+      //20 abre 90 fecha
+      middleFingerServo.write(angleMiddleFinger);
+      //200 abre 90 fech
+      ringFingerServo.write(angleRingFinger);
+      //0 abre 90 fecha
+      thumbServo.write(angleThumb);
     }
   }
-  Serial.println(angleMiddleFinger);
-  littleFingerServo.write(angleLittleFinger);
-  //indicatorFingerServo.write(angleIndicatorFinger);
-  //middleFingerServo.write(angleMiddleFinger);
-  //ringFingerServo.write(angleRingFinger);
-  //thumbServo.write(angleThumb);
 
   delay(10);
 }
